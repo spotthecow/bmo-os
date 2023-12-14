@@ -12,9 +12,17 @@ use core::panic::PanicInfo;
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
+    bmo_os::init();
+
+    fn stack_overflow() {
+        stack_overflow();
+    }
+
+    stack_overflow();
 
     #[cfg(test)]
     test_main();
+    println!("It did not crash!");
     loop {}
 }
 

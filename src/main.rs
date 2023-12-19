@@ -14,6 +14,7 @@ pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
     bmo_os::init();
 
+    #[allow(unconditional_recursion)]
     fn stack_overflow() {
         stack_overflow();
     }

@@ -14,17 +14,11 @@ pub extern "C" fn _start() -> ! {
     println!("Hello World{}", "!");
     bmo_os::init();
 
-    #[allow(unconditional_recursion)]
-    fn stack_overflow() {
-        stack_overflow();
-    }
-
-    stack_overflow();
-
     #[cfg(test)]
     test_main();
+
     println!("It did not crash!");
-    loop {}
+    bmo_os::hlt_loop();
 }
 
 #[cfg(not(test))]
@@ -32,7 +26,7 @@ pub extern "C" fn _start() -> ! {
 fn panic(info: &PanicInfo) -> ! {
     println!("{}", info);
 
-    loop {}
+    bmo_os::hlt_loop();
 }
 
 #[cfg(test)]

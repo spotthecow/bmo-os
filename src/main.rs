@@ -7,7 +7,7 @@
 mod serial;
 mod vga_buffer;
 
-use bmo_os::memory::{self, init};
+use bmo_os::memory::{self, init, BootInfoFrameAllocator};
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
 use x86_64::{structures::paging::Page, VirtAddr};
@@ -21,7 +21,7 @@ fn kernal_main(boot_info: &'static BootInfo) -> ! {
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
 
     let mut mapper = unsafe { init(phys_mem_offset) };
-    let mut frame_allocator = memory::EmptyFrameAllocator;
+    let mut frame_allocator = unsafe { BootInfoFrameAllocator::init(&boot_info.memory_map) };
 
     let page = Page::containing_address(VirtAddr::new(0x0));
     memory::create_example_mapping(page, &mut mapper, &mut frame_allocator);

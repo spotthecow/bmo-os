@@ -7,10 +7,10 @@
 mod serial;
 mod vga_buffer;
 
-use bmo_os::memory::{active_level_4_table, translate_addr};
+use bmo_os::memory::init;
 use bootloader::{entry_point, BootInfo};
 use core::panic::PanicInfo;
-use x86_64::{structures::paging::PageTable, VirtAddr};
+use x86_64::{structures::paging::Translate, VirtAddr};
 
 entry_point!(kernal_main);
 
@@ -19,6 +19,8 @@ fn kernal_main(boot_info: &'static BootInfo) -> ! {
     bmo_os::init();
 
     let phys_mem_offset = VirtAddr::new(boot_info.physical_memory_offset);
+
+    let mapper = unsafe { init(phys_mem_offset) };
 
     let addresses = [
         // the identity-mapped vga buffer page
@@ -33,7 +35,7 @@ fn kernal_main(boot_info: &'static BootInfo) -> ! {
 
     for &address in &addresses {
         let virt = VirtAddr::new(address);
-        let phys_addr = unsafe { translate_addr(virt, phys_mem_offset) };
+        let phys_addr = mapper.translate_addr(virt);
         println!("{:?} -> {:?}", virt, phys_addr.unwrap());
     }
 

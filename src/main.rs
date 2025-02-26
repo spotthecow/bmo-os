@@ -12,7 +12,7 @@ use core::panic::PanicInfo;
 
 entry_point!(kernal_main);
 
-fn kernal_main(boot_info: &'static BootInfo) -> ! {
+fn kernal_main(_boot_info: &'static BootInfo) -> ! {
     println!("Hello World{}", "!");
     bmo_os::init();
 
